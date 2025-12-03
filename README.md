@@ -1,6 +1,22 @@
 # 💰 Simulador de Aposentadoria e Investimentos
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/fdopertussatti/simulador-aposentadoria)
+
 Um simulador interativo e intuitivo para calcular a evolução do seu patrimônio ao longo do tempo, considerando aportes mensais, juros compostos e correção anual dos valores investidos.
+
+## 🚀 Deploy
+
+Este projeto está configurado para deploy automático na Vercel. Basta conectar seu repositório GitHub à Vercel e o deploy será feito automaticamente a cada push.
+
+### Como fazer o deploy:
+
+1. Acesse [vercel.com](https://vercel.com)
+2. Faça login com sua conta GitHub
+3. Clique em "Add New Project"
+4. Selecione o repositório `simulador-aposentadoria`
+5. Clique em "Deploy"
+
+Pronto! Seu simulador estará disponível em uma URL da Vercel.
 
 ## 📋 Sobre o Projeto
 
@@ -12,6 +28,7 @@ Esta ferramenta educacional permite que você simule diferentes cenários de inv
 - **Correção anual**: Ajuste automático dos aportes mensais ao longo do tempo (ex: inflação, aumento de renda)
 - **Juros compostos**: Capitalização mensal dos rendimentos
 - **Renda mensal estimada**: Veja quanto você poderia retirar mensalmente do patrimônio acumulado
+- **Gráfico interativo**: Visualize a evolução do patrimônio ao longo do tempo
 - **Interface responsiva**: Funciona perfeitamente em desktop e dispositivos móveis
 - **Design moderno**: Interface limpa e fácil de usar
 
@@ -29,13 +46,19 @@ Esta ferramenta educacional permite que você simule diferentes cenários de inv
 - **Patrimônio final**: Valor estimado ao final do período
 - **Renda mensal estimada**: Quanto você poderia retirar mensalmente
 - **Último aporte mensal**: Valor do aporte no último ano (após correções)
+- **Gráfico de evolução**: Visualização da progressão do patrimônio vs. total investido
 
 ## 🚀 Como Usar
 
-1. Abra o arquivo `simulador-aposentadoria.html` no seu navegador
-2. Ajuste os parâmetros conforme seu planejamento financeiro
-3. Clique em "Rodar simulação" para ver os resultados
-4. Experimente diferentes cenários alterando os valores
+### Online (Recomendado)
+Acesse diretamente o simulador na Vercel após o deploy.
+
+### Local
+1. Clone o repositório
+2. Abra o arquivo `index.html` no seu navegador
+3. Ajuste os parâmetros conforme seu planejamento financeiro
+4. Clique em "Rodar simulação" para ver os resultados
+5. Experimente diferentes cenários alterando os valores
 
 ## 💡 Exemplos de Uso
 
@@ -58,7 +81,9 @@ Esta ferramenta educacional permite que você simule diferentes cenários de inv
 - HTML5
 - CSS3 (com variáveis CSS)
 - JavaScript (Vanilla)
+- Chart.js 4.4.0
 - Design responsivo
+- Vercel (deploy)
 
 ## ⚠️ Aviso Legal
 
