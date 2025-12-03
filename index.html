@@ -52,6 +52,24 @@
       font-size: 0.95rem;
     }
 
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-soft);
+      background: #fff;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
@@ -285,11 +303,23 @@
 <body>
   <div class="container">
     <header>
-      <h1>Simulador de Aposentadoria e Investimentos</h1>
-      <p>
+      <h1 id="title">Simulador de Aposentadoria e Investimentos</h1>
+      <p id="subtitle">
         Ajuste os valores abaixo e veja como o tempo, os aportes mensais e os juros compostos
         podem influenciar o seu patrimônio futuro.
       </p>
+      <div class="header-actions">
+        <label for="lang" class="visually-hidden">Idioma</label>
+        <select id="lang" class="select" aria-label="Idioma">
+          <option value="pt-BR">Português (Brasil)</option>
+          <option value="en-US">English (US)</option>
+        </select>
+        <label for="currency" class="visually-hidden">Moeda</label>
+        <select id="currency" class="select" aria-label="Moeda">
+          <option value="BRL">R$ BRL</option>
+          <option value="USD">$ USD</option>
+        </select>
+      </div>
     </header>
 
     <div class="grid">
@@ -450,6 +480,81 @@
 
   <script>
     let chartInstance = null;
+    let currentLang = 'pt-BR';
+    let currentCurrency = 'BRL';
+
+    const i18n = {
+      'pt-BR': {
+        title: 'Simulador de Aposentadoria e Investimentos',
+        subtitle: 'Ajuste os valores abaixo e veja como o tempo, os aportes mensais e os juros compostos podem influenciar o seu patrimônio futuro.',
+        formBadge: 'Entrada de dados',
+        formHelpRate: 'percentual ao ano',
+        prazoLabel: 'Prazo de investimento (anos)',
+        prazoHelp: 'Quanto tempo você pretende manter o dinheiro investido.',
+        valorInicialLabel: 'Valor inicial',
+        valorInicialHelp: 'Patrimônio já investido hoje.',
+        aporteMensalLabel: 'Aporte mensal',
+        aporteMensalHelp: 'Quanto você pretende investir todo mês.',
+        taxaAnualLabel: 'Rentabilidade anual',
+        taxaAnualHelp: 'Taxa média estimada do investimento (bruta, a.a.).',
+        correcaoLabel: 'Correção anual dos aportes',
+        correcaoHelp: 'Percentual de aumento anual do valor do aporte mensal (ex.: para repor inflação ou aumento de renda).',
+        runSim: 'Rodar simulação',
+        resultsBadge: 'Resultados',
+        resultsSubtitle: 'Os valores abaixo são estimativas, assumindo aportes mensais constantes ao longo do período, com correção anual e juros compostos mensais.',
+        totalInvestido: 'Total investido',
+        patrimonioFinal: 'Patrimônio final',
+        rendaMensal: 'Renda mensal estimada',
+        ultimoAporte: 'Último aporte mensal',
+        totalInvestidoNote: 'Soma de todos os aportes realizados, incluindo o valor inicial.',
+        patrimonioFinalNote: 'Valor estimado ao final do período, considerando juros compostos.',
+        rendaMensalNote: 'Aproximação de renda mensal usando a mesma taxa mensal do investimento.',
+        ultimoAporteNote: 'Valor aproximado do aporte mensal no último ano da simulação.',
+        hints: ['Se não houver valor inicial, deixe o campo 2 com R$ 0,00.', 'Se não quiser fazer aportes mensais, deixe o campo 3 com R$ 0,00.', 'As taxas usadas são apenas exemplos. Adapte conforme o tipo de investimento e seu perfil de risco.'],
+        disclaimer: 'Este simulador é apenas uma ferramenta educacional e não constitui recomendação de investimento. Considere custos, impostos e seu perfil antes de tomar decisões financeiras reais.',
+        footer: 'Dica: você pode ajustar livremente as taxas e valores para testar diferentes cenários de aposentadoria ou de construção de patrimônio de longo prazo.',
+        chartBadge: 'Evolução do patrimônio',
+        chartSubtitle: 'Veja como seu patrimônio evolui ao longo do tempo. A linha azul mostra o patrimônio total e a linha verde representa o total investido (sem juros).',
+        chartTotal: 'Patrimônio Total',
+        chartInvested: 'Total Investido',
+        errorPrazo: 'O prazo de investimento deve ser maior que zero.'
+      },
+      'en-US': {
+        title: 'Retirement and Investment Simulator',
+        subtitle: 'Adjust the values below and see how time, monthly contributions and compound interest can impact your future wealth.',
+        formBadge: 'Input data',
+        formHelpRate: 'percentage per year',
+        prazoLabel: 'Investment horizon (years)',
+        prazoHelp: 'How long you plan to keep the money invested.',
+        valorInicialLabel: 'Initial amount',
+        valorInicialHelp: 'Capital already invested today.',
+        aporteMensalLabel: 'Monthly contribution',
+        aporteMensalHelp: 'How much you plan to invest every month.',
+        taxaAnualLabel: 'Annual return',
+        taxaAnualHelp: 'Estimated average investment rate (gross, per year).',
+        correcaoLabel: 'Annual contribution increase',
+        correcaoHelp: 'Yearly percentage increase of the monthly contribution (e.g., to account for inflation or income growth).',
+        runSim: 'Run simulation',
+        resultsBadge: 'Results',
+        resultsSubtitle: 'Values below are estimates, assuming constant monthly contributions over the period, with annual adjustment and monthly compound interest.',
+        totalInvestido: 'Total invested',
+        patrimonioFinal: 'Final wealth',
+        rendaMensal: 'Estimated monthly income',
+        ultimoAporte: 'Last monthly contribution',
+        totalInvestidoNote: 'Sum of all contributions made, including the initial amount.',
+        patrimonioFinalNote: 'Estimated value at the end of the period, considering compound interest.',
+        rendaMensalNote: 'Approximate monthly income using the same monthly investment rate.',
+        ultimoAporteNote: 'Approximate monthly contribution value in the last year of the simulation.',
+        hints: ['If there is no initial amount, leave field 2 at $ 0.00.', 'If you do not want monthly contributions, leave field 3 at $ 0.00.', 'Rates used are examples only. Adjust according to the investment type and your risk profile.'],
+        disclaimer: 'This simulator is an educational tool and does not constitute investment advice. Consider costs, taxes and your profile before making real financial decisions.',
+        footer: 'Tip: you can freely adjust rates and amounts to test different retirement or long-term wealth-building scenarios.',
+        chartBadge: 'Wealth evolution',
+        chartSubtitle: 'See how your wealth evolves over time. The blue line shows total wealth and the green line represents total invested (without interest).',
+        chartTotal: 'Total Wealth',
+        chartInvested: 'Total Invested',
+        errorPrazo: 'Investment horizon must be greater than zero.'
+      }
+    };
 
     function parsePercentInput(value) {
       const num = parseFloat(value.toString().replace(",", "."));
@@ -464,10 +569,12 @@
       return num;
     }
 
-    function formatCurrencyBRL(value) {
-      return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
+    function formatCurrency(value) {
+      const locale = currentLang;
+      const currency = currentCurrency;
+      return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency,
         maximumFractionDigits: 2
       }).format(value || 0);
     }
@@ -485,7 +592,7 @@
           labels: labels,
           datasets: [
             {
-              label: 'Patrimônio Total',
+              label: i18n[currentLang].chartTotal,
               data: patrimonioData,
               borderColor: '#1a73e8',
               backgroundColor: 'rgba(26, 115, 232, 0.1)',
@@ -496,7 +603,7 @@
               pointHoverRadius: 6
             },
             {
-              label: 'Total Investido',
+              label: i18n[currentLang].chartInvested,
               data: investidoData,
               borderColor: '#34a853',
               backgroundColor: 'rgba(52, 168, 83, 0.05)',
@@ -543,7 +650,7 @@
                   if (label) {
                     label += ': ';
                   }
-                  label += formatCurrencyBRL(context.parsed.y);
+                  label += formatCurrency(context.parsed.y);
                   return label;
                 }
               }
@@ -568,7 +675,8 @@
               },
               ticks: {
                 callback: function(value) {
-                  return 'R$ ' + (value / 1000).toFixed(0) + 'k';
+                  // Abreviação em milhares, sem símbolo (tooltip mostra com símbolo)
+                  return (value / 1000).toFixed(0) + 'k';
                 }
               }
             }
@@ -644,10 +752,10 @@
 
       const rendaMensal = patrimonio * taxaMensal;
 
-      document.getElementById("outTotalInvestido").textContent = formatCurrencyBRL(totalInvestido);
-      document.getElementById("outPatrimonioFinal").textContent = formatCurrencyBRL(patrimonio);
-      document.getElementById("outRendaMensal").textContent = formatCurrencyBRL(rendaMensal);
-      document.getElementById("outUltimoAporte").textContent = formatCurrencyBRL(ultimoAporte);
+      document.getElementById("outTotalInvestido").textContent = formatCurrency(totalInvestido);
+      document.getElementById("outPatrimonioFinal").textContent = formatCurrency(patrimonio);
+      document.getElementById("outRendaMensal").textContent = formatCurrency(rendaMensal);
+      document.getElementById("outUltimoAporte").textContent = formatCurrency(ultimoAporte);
 
       // Atualiza o gráfico
       updateChart(labels, patrimonioData, investidoData);
@@ -655,7 +763,70 @@
 
     document.getElementById("btnSimular").addEventListener("click", simulate);
 
-    // Roda uma simulação inicial com os valores padrão
+    function applyTexts() {
+      const t = i18n[currentLang];
+      document.getElementById('title').textContent = t.title;
+      document.getElementById('subtitle').textContent = t.subtitle;
+      // Badges, labels and notes
+      document.querySelector('.grid .card .card-title .card-title-badge').textContent = t.formBadge;
+      document.querySelectorAll('label[for="prazo"]')[0].childNodes[2].nodeValue = ' ' + t.prazoLabel + '\n';
+      document.querySelector('label[for="prazo"] small').textContent = t.prazoHelp;
+      document.querySelectorAll('label[for="valorInicial"]')[0].childNodes[2].nodeValue = ' ' + t.valorInicialLabel + '\n';
+      document.querySelector('label[for="valorInicial"] small').textContent = t.valorInicialHelp;
+      document.querySelectorAll('label[for="aporteMensal"]')[0].childNodes[2].nodeValue = ' ' + t.aporteMensalLabel + '\n';
+      document.querySelector('label[for="aporteMensal"] small').textContent = t.aporteMensalHelp;
+      document.querySelectorAll('label[for="taxaAnual"]')[0].childNodes[2].nodeValue = ' ' + t.taxaAnualLabel + '\n';
+      document.querySelector('label[for="taxaAnual"] small').textContent = t.taxaAnualHelp;
+      document.querySelectorAll('label[for="correcaoAporte"]')[0].childNodes[2].nodeValue = ' ' + t.correcaoLabel + '\n';
+      document.querySelector('label[for="correcaoAporte"] small').textContent = t.correcaoHelp;
+      document.getElementById('btnSimular').innerHTML = '<span class="btn-icon">▶</span>' + t.runSim;
+
+      // Resultados
+      const resultCards = document.querySelectorAll('.results-grid .result-card');
+      resultCards[0].querySelector('.result-label').textContent = t.totalInvestido;
+      resultCards[0].querySelector('.result-note').textContent = t.totalInvestidoNote;
+      resultCards[1].querySelector('.result-label').textContent = t.patrimonioFinal;
+      resultCards[1].querySelector('.result-note').textContent = t.patrimonioFinalNote;
+      resultCards[2].querySelector('.result-label').textContent = t.rendaMensal;
+      resultCards[2].querySelector('.result-note').textContent = t.rendaMensalNote;
+      resultCards[3].querySelector('.result-label').textContent = t.ultimoAporte;
+      resultCards[3].querySelector('.result-note').textContent = t.ultimoAporteNote;
+
+      // Badge e subtítulo de resultados
+      document.querySelectorAll('.grid .card .card-title .card-title-badge')[1].textContent = t.resultsBadge;
+      document.querySelectorAll('.grid .card .card-subtitle')[1].textContent = t.resultsSubtitle;
+
+      // Gráfico
+      document.querySelector('.chart-container .card-title .card-title-badge').textContent = t.chartBadge;
+      document.querySelector('.chart-container .card-subtitle').textContent = t.chartSubtitle;
+
+      // Hints
+      const ul = document.querySelector('.info-list');
+      ul.innerHTML = '';
+      t.hints.forEach(h => {
+        const li = document.createElement('li');
+        li.textContent = h;
+        ul.appendChild(li);
+      });
+
+      // Disclaimer e footer
+      document.querySelector('.disclaimer').textContent = t.disclaimer;
+      document.querySelector('footer').textContent = t.footer;
+    }
+
+    document.getElementById('lang').addEventListener('change', (e) => {
+      currentLang = e.target.value;
+      applyTexts();
+      simulate();
+    });
+
+    document.getElementById('currency').addEventListener('change', (e) => {
+      currentCurrency = e.target.value;
+      simulate();
+    });
+
+    // Inicializa textos e simulação
+    applyTexts();
     simulate();
   </script>
 </body>
