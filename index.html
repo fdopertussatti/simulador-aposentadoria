@@ -328,7 +328,7 @@
         <div class="card-title">
           <span class="card-title-badge">Entrada de dados</span>
         </div>
-        <p class="card-subtitle">
+        <p class="card-subtitle" id="formSubtitle">
           Preencha as informações do seu plano de investimento. As taxas anuais devem ser digitadas em
           <strong>percentual ao ano</strong> (por exemplo, 16.5 para 16,5% a.a.).
         </p>
@@ -340,7 +340,7 @@
           </label>
           <div>
             <input id="prazo" type="number" min="1" step="1" value="20" />
-            <span class="inline-suffix">anos</span>
+            <span class="inline-suffix" id="suffixPrazo">anos</span>
           </div>
         </div>
 
@@ -351,7 +351,7 @@
           </label>
           <div>
             <input id="valorInicial" type="number" min="0" step="1000" value="25000" />
-            <span class="inline-suffix">R$</span>
+            <span class="inline-suffix" id="suffixValor">R$</span>
           </div>
         </div>
 
@@ -362,7 +362,7 @@
           </label>
           <div>
             <input id="aporteMensal" type="number" min="0" step="100" value="2000" />
-            <span class="inline-suffix">R$ / mês</span>
+            <span class="inline-suffix" id="suffixAporte">R$ / mês</span>
           </div>
         </div>
 
@@ -373,7 +373,7 @@
           </label>
           <div>
             <input id="taxaAnual" type="number" min="0" step="0.1" value="16.5" />
-            <span class="inline-suffix">% a.a.</span>
+            <span class="inline-suffix" id="suffixTaxa">% a.a.</span>
           </div>
         </div>
 
@@ -387,7 +387,18 @@
           </label>
           <div>
             <input id="correcaoAporte" type="number" min="0" step="0.1" value="5" />
-            <span class="inline-suffix">% a.a.</span>
+            <span class="inline-suffix" id="suffixCorrecao">% a.a.</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="inflacao">
+            <span>6.</span> <span id="labelInflacao">Inflação média anual estimada</span>
+            <small id="helpInflacao">Média histórica dos últimos 10 anos: Brasil ~6.5%, EUA ~3.5%. Use para calcular poder de compra futuro.</small>
+          </label>
+          <div>
+            <input id="inflacao" type="number" min="0" step="0.1" value="6.5" />
+            <span class="inline-suffix" id="suffixInflacao">% a.a.</span>
           </div>
         </div>
 
@@ -431,6 +442,14 @@
             <div id="outRendaMensal" class="result-value">R$ 0,00</div>
             <div class="result-note">
               Aproximação de renda mensal usando a mesma taxa mensal do investimento.
+            </div>
+          </div>
+
+          <div class="result-card result-highlight">
+            <div class="result-label">Renda ajustada (hoje)</div>
+            <div id="outRendaAjustada" class="result-value">R$ 0,00</div>
+            <div class="result-note">
+              Poder de compra equivalente da renda mensal em valores de hoje, considerando inflação.
             </div>
           </div>
 
@@ -488,71 +507,97 @@
         title: 'Simulador de Aposentadoria e Investimentos',
         subtitle: 'Ajuste os valores abaixo e veja como o tempo, os aportes mensais e os juros compostos podem influenciar o seu patrimônio futuro.',
         formBadge: 'Entrada de dados',
-        formHelpRate: 'percentual ao ano',
+        formSubtitle: 'Preencha as informações do seu plano de investimento. As taxas anuais devem ser digitadas em',
+        formSubtitleBold: 'percentual ao ano',
+        formSubtitleEnd: '(por exemplo, 16.5 para 16,5% a.a.).',
         prazoLabel: 'Prazo de investimento (anos)',
         prazoHelp: 'Quanto tempo você pretende manter o dinheiro investido.',
+        prazoSuffix: 'anos',
         valorInicialLabel: 'Valor inicial',
         valorInicialHelp: 'Patrimônio já investido hoje.',
+        valorInicialSuffix: 'R$',
         aporteMensalLabel: 'Aporte mensal',
         aporteMensalHelp: 'Quanto você pretende investir todo mês.',
+        aporteMensalSuffix: 'R$ / mês',
         taxaAnualLabel: 'Rentabilidade anual',
         taxaAnualHelp: 'Taxa média estimada do investimento (bruta, a.a.).',
+        taxaSuffix: '% a.a.',
         correcaoLabel: 'Correção anual dos aportes',
         correcaoHelp: 'Percentual de aumento anual do valor do aporte mensal (ex.: para repor inflação ou aumento de renda).',
+        inflacaoLabel: 'Inflação média anual estimada',
+        inflacaoHelp: 'Média histórica dos últimos 10 anos: Brasil ~6.5%, EUA ~3.5%. Use para calcular poder de compra futuro.',
         runSim: 'Rodar simulação',
         resultsBadge: 'Resultados',
         resultsSubtitle: 'Os valores abaixo são estimativas, assumindo aportes mensais constantes ao longo do período, com correção anual e juros compostos mensais.',
         totalInvestido: 'Total investido',
         patrimonioFinal: 'Patrimônio final',
         rendaMensal: 'Renda mensal estimada',
+        rendaMensalAjustada: 'Renda ajustada (hoje)',
         ultimoAporte: 'Último aporte mensal',
         totalInvestidoNote: 'Soma de todos os aportes realizados, incluindo o valor inicial.',
         patrimonioFinalNote: 'Valor estimado ao final do período, considerando juros compostos.',
         rendaMensalNote: 'Aproximação de renda mensal usando a mesma taxa mensal do investimento.',
+        rendaMensalAjustadaNote: 'Poder de compra equivalente da renda mensal em valores de hoje, considerando inflação.',
         ultimoAporteNote: 'Valor aproximado do aporte mensal no último ano da simulação.',
-        hints: ['Se não houver valor inicial, deixe o campo 2 com R$ 0,00.', 'Se não quiser fazer aportes mensais, deixe o campo 3 com R$ 0,00.', 'As taxas usadas são apenas exemplos. Adapte conforme o tipo de investimento e seu perfil de risco.'],
+        hints: ['Se não houver valor inicial, deixe o campo com 0.', 'Se não quiser fazer aportes mensais, deixe o campo com 0.', 'As taxas usadas são apenas exemplos. Adapte conforme o tipo de investimento e seu perfil de risco.'],
         disclaimer: 'Este simulador é apenas uma ferramenta educacional e não constitui recomendação de investimento. Considere custos, impostos e seu perfil antes de tomar decisões financeiras reais.',
         footer: 'Dica: você pode ajustar livremente as taxas e valores para testar diferentes cenários de aposentadoria ou de construção de patrimônio de longo prazo.',
         chartBadge: 'Evolução do patrimônio',
-        chartSubtitle: 'Veja como seu patrimônio evolui ao longo do tempo. A linha azul mostra o patrimônio total e a linha verde representa o total investido (sem juros).',
+        chartSubtitle: 'A linha azul mostra o patrimônio total, a verde o total investido e a laranja o patrimônio ajustado pela inflação (poder de compra real).',
         chartTotal: 'Patrimônio Total',
         chartInvested: 'Total Investido',
-        errorPrazo: 'O prazo de investimento deve ser maior que zero.'
+        chartInflationAdj: 'Ajustado por Inflação',
+        errorPrazo: 'O prazo de investimento deve ser maior que zero.',
+        month: 'Mês',
+        year: 'Ano'
       },
       'en-US': {
         title: 'Retirement and Investment Simulator',
         subtitle: 'Adjust the values below and see how time, monthly contributions and compound interest can impact your future wealth.',
         formBadge: 'Input data',
-        formHelpRate: 'percentage per year',
+        formSubtitle: 'Fill in your investment plan information. Annual rates should be entered as',
+        formSubtitleBold: 'percentage per year',
+        formSubtitleEnd: '(e.g., 16.5 for 16.5% p.a.).',
         prazoLabel: 'Investment horizon (years)',
         prazoHelp: 'How long you plan to keep the money invested.',
+        prazoSuffix: 'years',
         valorInicialLabel: 'Initial amount',
         valorInicialHelp: 'Capital already invested today.',
+        valorInicialSuffix: '$',
         aporteMensalLabel: 'Monthly contribution',
         aporteMensalHelp: 'How much you plan to invest every month.',
+        aporteMensalSuffix: '$ / month',
         taxaAnualLabel: 'Annual return',
         taxaAnualHelp: 'Estimated average investment rate (gross, per year).',
+        taxaSuffix: '% p.a.',
         correcaoLabel: 'Annual contribution increase',
         correcaoHelp: 'Yearly percentage increase of the monthly contribution (e.g., to account for inflation or income growth).',
+        inflacaoLabel: 'Estimated average annual inflation',
+        inflacaoHelp: '10-year historical average: Brazil ~6.5%, USA ~3.5%. Used to calculate future purchasing power.',
         runSim: 'Run simulation',
         resultsBadge: 'Results',
         resultsSubtitle: 'Values below are estimates, assuming constant monthly contributions over the period, with annual adjustment and monthly compound interest.',
         totalInvestido: 'Total invested',
         patrimonioFinal: 'Final wealth',
         rendaMensal: 'Estimated monthly income',
+        rendaMensalAjustada: 'Adjusted income (today)',
         ultimoAporte: 'Last monthly contribution',
         totalInvestidoNote: 'Sum of all contributions made, including the initial amount.',
         patrimonioFinalNote: 'Estimated value at the end of the period, considering compound interest.',
         rendaMensalNote: 'Approximate monthly income using the same monthly investment rate.',
+        rendaMensalAjustadaNote: 'Equivalent purchasing power of monthly income in today\'s values, considering inflation.',
         ultimoAporteNote: 'Approximate monthly contribution value in the last year of the simulation.',
-        hints: ['If there is no initial amount, leave field 2 at $ 0.00.', 'If you do not want monthly contributions, leave field 3 at $ 0.00.', 'Rates used are examples only. Adjust according to the investment type and your risk profile.'],
+        hints: ['If there is no initial amount, leave the field at 0.', 'If you do not want monthly contributions, leave the field at 0.', 'Rates used are examples only. Adjust according to the investment type and your risk profile.'],
         disclaimer: 'This simulator is an educational tool and does not constitute investment advice. Consider costs, taxes and your profile before making real financial decisions.',
         footer: 'Tip: you can freely adjust rates and amounts to test different retirement or long-term wealth-building scenarios.',
         chartBadge: 'Wealth evolution',
-        chartSubtitle: 'See how your wealth evolves over time. The blue line shows total wealth and the green line represents total invested (without interest).',
+        chartSubtitle: 'Blue line shows total wealth, green shows total invested, and orange shows inflation-adjusted wealth (real purchasing power).',
         chartTotal: 'Total Wealth',
         chartInvested: 'Total Invested',
-        errorPrazo: 'Investment horizon must be greater than zero.'
+        chartInflationAdj: 'Inflation-Adjusted',
+        errorPrazo: 'Investment horizon must be greater than zero.',
+        month: 'Month',
+        year: 'Year'
       }
     };
 
@@ -579,7 +624,7 @@
       }).format(value || 0);
     }
 
-    function updateChart(labels, patrimonioData, investidoData) {
+    function updateChart(labels, patrimonioData, investidoData, inflationAdjData) {
       const ctx = document.getElementById('chartPatrimonio').getContext('2d');
 
       if (chartInstance) {
@@ -613,6 +658,18 @@
               pointRadius: 0,
               pointHoverRadius: 6,
               borderDash: [5, 5]
+            },
+            {
+              label: i18n[currentLang].chartInflationAdj,
+              data: inflationAdjData,
+              borderColor: '#f9ab00',
+              backgroundColor: 'rgba(249, 171, 0, 0.05)',
+              borderWidth: 2,
+              fill: false,
+              tension: 0.4,
+              pointRadius: 0,
+              pointHoverRadius: 6,
+              borderDash: [3, 3]
             }
           ]
         },
@@ -695,10 +752,11 @@
       const aporteMensalBase = parseNumberInput(document.getElementById("aporteMensal").value);
       const taxaAnual = parsePercentInput(document.getElementById("taxaAnual").value);
       const correcaoAporteAnual = parsePercentInput(document.getElementById("correcaoAporte").value);
+      const inflacaoAnual = parsePercentInput(document.getElementById("inflacao").value);
 
       if (prazoAnos <= 0) {
         errorEl.style.display = "block";
-        errorEl.textContent = "O prazo de investimento deve ser maior que zero.";
+        errorEl.textContent = i18n[currentLang].errorPrazo;
         return;
       }
 
@@ -708,6 +766,8 @@
       const taxaMensal = Math.pow(1 + taxaAnual, 1 / 12) - 1;
       // Correção mensal aproximada do aporte
       const correcaoMensal = Math.pow(1 + correcaoAporteAnual, 1 / 12) - 1;
+      // Inflação mensal
+      const inflacaoMensal = Math.pow(1 + inflacaoAnual, 1 / 12) - 1;
 
       let patrimonio = valorInicial;
       let totalInvestido = valorInicial;
@@ -718,11 +778,14 @@
       const labels = [];
       const patrimonioData = [];
       const investidoData = [];
+      const inflationAdjData = [];
 
       // Adiciona ponto inicial
-      labels.push('Mês 0');
+      const t = i18n[currentLang];
+      labels.push(`${t.month} 0`);
       patrimonioData.push(valorInicial);
       investidoData.push(valorInicial);
+      inflationAdjData.push(valorInicial);
 
       // Frequência de amostragem para o gráfico (captura a cada N meses)
       const sampleRate = Math.max(1, Math.floor(meses / 60)); // Máximo de 60 pontos no gráfico
@@ -741,9 +804,13 @@
         if (m % sampleRate === 0 || m === meses) {
           const ano = Math.floor(m / 12);
           const mes = m % 12;
-          labels.push(ano > 0 ? `Ano ${ano}${mes > 0 ? `.${mes}` : ''}` : `Mês ${m}`);
+          const t = i18n[currentLang];
+          labels.push(ano > 0 ? `${t.year} ${ano}${mes > 0 ? `.${mes}` : ''}` : `${t.month} ${m}`);
           patrimonioData.push(Math.round(patrimonio));
           investidoData.push(Math.round(totalInvestido));
+          // Patrimônio ajustado pela inflação (traz para valores de hoje)
+          const patrimonioAjustado = patrimonio / Math.pow(1 + inflacaoAnual, m / 12);
+          inflationAdjData.push(Math.round(patrimonioAjustado));
         }
 
         // atualiza aporte para o próximo mês
@@ -751,14 +818,17 @@
       }
 
       const rendaMensal = patrimonio * taxaMensal;
+      // Renda ajustada pela inflação (poder de compra em valores de hoje)
+      const rendaAjustada = rendaMensal / Math.pow(1 + inflacaoAnual, prazoAnos);
 
       document.getElementById("outTotalInvestido").textContent = formatCurrency(totalInvestido);
       document.getElementById("outPatrimonioFinal").textContent = formatCurrency(patrimonio);
       document.getElementById("outRendaMensal").textContent = formatCurrency(rendaMensal);
+      document.getElementById("outRendaAjustada").textContent = formatCurrency(rendaAjustada);
       document.getElementById("outUltimoAporte").textContent = formatCurrency(ultimoAporte);
 
       // Atualiza o gráfico
-      updateChart(labels, patrimonioData, investidoData);
+      updateChart(labels, patrimonioData, investidoData, inflationAdjData);
     }
 
     document.getElementById("btnSimular").addEventListener("click", simulate);
@@ -779,7 +849,21 @@
       document.querySelector('label[for="taxaAnual"] small').textContent = t.taxaAnualHelp;
       document.querySelectorAll('label[for="correcaoAporte"]')[0].childNodes[2].nodeValue = ' ' + t.correcaoLabel + '\n';
       document.querySelector('label[for="correcaoAporte"] small').textContent = t.correcaoHelp;
+      document.getElementById('labelInflacao').textContent = t.inflacaoLabel;
+      document.getElementById('helpInflacao').textContent = t.inflacaoHelp;
       document.getElementById('btnSimular').innerHTML = '<span class="btn-icon">▶</span>' + t.runSim;
+
+      // Form subtitle
+      const formSub = document.getElementById('formSubtitle');
+      formSub.innerHTML = t.formSubtitle + ' <strong>' + t.formSubtitleBold + '</strong> ' + t.formSubtitleEnd;
+
+      // Suffixes
+      document.getElementById('suffixPrazo').textContent = t.prazoSuffix;
+      document.getElementById('suffixValor').textContent = currentCurrency === 'BRL' ? t.valorInicialSuffix : '$';
+      document.getElementById('suffixAporte').textContent = t.aporteMensalSuffix;
+      document.getElementById('suffixTaxa').textContent = t.taxaSuffix;
+      document.getElementById('suffixCorrecao').textContent = t.taxaSuffix;
+      document.getElementById('suffixInflacao').textContent = t.taxaSuffix;
 
       // Resultados
       const resultCards = document.querySelectorAll('.results-grid .result-card');
@@ -789,8 +873,10 @@
       resultCards[1].querySelector('.result-note').textContent = t.patrimonioFinalNote;
       resultCards[2].querySelector('.result-label').textContent = t.rendaMensal;
       resultCards[2].querySelector('.result-note').textContent = t.rendaMensalNote;
-      resultCards[3].querySelector('.result-label').textContent = t.ultimoAporte;
-      resultCards[3].querySelector('.result-note').textContent = t.ultimoAporteNote;
+      resultCards[3].querySelector('.result-label').textContent = t.rendaMensalAjustada;
+      resultCards[3].querySelector('.result-note').textContent = t.rendaMensalAjustadaNote;
+      resultCards[4].querySelector('.result-label').textContent = t.ultimoAporte;
+      resultCards[4].querySelector('.result-note').textContent = t.ultimoAporteNote;
 
       // Badge e subtítulo de resultados
       document.querySelectorAll('.grid .card .card-title .card-title-badge')[1].textContent = t.resultsBadge;
